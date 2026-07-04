@@ -86,6 +86,9 @@ The FastAPI backend can be easily deployed using Render's Web Services.
    A sequential traversal through 6 distinct agent loops (with 4 making external API connections) requires anywhere from 15 to 45 seconds depending on upstream provider queues.
    - *Mitigation*: A standard global spinner induces user fatigue and high bounce rates. The frontend implements a time-bound state-machine engine that synchronizes with the typical runtime performance profiles of each agent. By flashing explicit functional status descriptions linked to relevant icons (e.g., checking safety sheets, querying molecular trial registries), the user is provided with continuous psychological validation of system progress.
 
+6. **OAuth2 Compliance & Token Lifecycle**:
+   To meet security standards, the application decouples standard JSON request payloads from authentication entry points. The `/auth/login` endpoint strictly requires `application/x-www-form-urlencoded` payloads via `OAuth2PasswordRequestForm`. Downstream verification is enforced globally via FastAPI dependency injection, keeping token validation detached from core domain logic.
+
 ### Deploying the Frontend to Vercel
 
 The React SPA is optimized for Vercel.
