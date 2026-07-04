@@ -82,6 +82,10 @@ The FastAPI backend can be easily deployed using Render's Web Services.
    Because cloud platforms like Render operate on ephemeral containers, any local SQLite data (`users.db`) and ChromaDB vector segments will vanish upon instance idling or deployment updates.
    - *Mitigation*: The application uses a programmatic bootstrap phase during startup. By hooking into the FastAPI `@asynccontextmanager` lifespan, the system automatically triggers a background fetch to the NCBI PMC database for a highly relevant default paper (e.g., `PMC8043444`). This ensures the vector index contains baseline medical embeddings instantly upon booting, removing operational friction for live evaluations.
 
+5. **Multi-Agent Latency UI Deception**:
+   A sequential traversal through 6 distinct agent loops (with 4 making external API connections) requires anywhere from 15 to 45 seconds depending on upstream provider queues.
+   - *Mitigation*: A standard global spinner induces user fatigue and high bounce rates. The frontend implements a time-bound state-machine engine that synchronizes with the typical runtime performance profiles of each agent. By flashing explicit functional status descriptions linked to relevant icons (e.g., checking safety sheets, querying molecular trial registries), the user is provided with continuous psychological validation of system progress.
+
 ### Deploying the Frontend to Vercel
 
 The React SPA is optimized for Vercel.
