@@ -21,7 +21,8 @@ function App() {
     formData.append('file', selectedFile)
 
     try {
-      const response = await fetch('http://localhost:8000/upload', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/upload`, {
         method: 'POST',
         body: formData
       })
@@ -43,7 +44,8 @@ function App() {
     setTranslation('')
     
     try {
-      const response = await fetch(`http://localhost:8000/analyze?question=${encodeURIComponent(query)}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/analyze?question=${encodeURIComponent(query)}`, {
         method: 'POST'
       })
       const data = await response.json()
