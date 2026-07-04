@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -16,8 +16,8 @@ export default function Dashboard() {
 
   // Fake-but-honest progress indicator for Agent workflow
   useEffect(() => {
-    let timeout1: NodeJS.Timeout;
-    let timeout2: NodeJS.Timeout;
+    let timeout1: ReturnType<typeof setTimeout>;
+    let timeout2: ReturnType<typeof setTimeout>;
     if (isLoading) {
       setLoadingPhase(0); // Researcher
       timeout1 = setTimeout(() => setLoadingPhase(1), 5000); // Writer
