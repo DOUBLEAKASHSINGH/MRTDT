@@ -5,7 +5,7 @@ from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.ingestion.pdf_parser import process_pdf
 from app.db.chroma import store_chunks
-from app.agents.crew import create_medical_translation_crew
+from app.agents.crew_setup import create_expanded_medical_crew
 from app.ingestion.pmc_api import fetch_and_ingest
 
 from app.db.database import engine, Base
@@ -50,7 +50,7 @@ def upload_task(file_path: str, document_id: str):
 
 @app.post("/analyze")
 async def analyze(question: str, current_user: User = Depends(get_current_user)):
-    crew = create_medical_translation_crew()
+    crew = create_expanded_medical_crew()
     result = crew.kickoff(inputs={"question": question})
     return {"answer": str(result.raw)}
 
