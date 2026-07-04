@@ -78,8 +78,9 @@ The FastAPI backend can be easily deployed using Render's Web Services.
 3. **Environment Variables**:
    - `GEMINI_API_KEY`: Your Gemini API Key.
    - `PYTHON_VERSION`: `3.11.0` (Recommended)
-4. **Important Note on Disk Space**: Render's free tier uses ephemeral filesystems. This means that if the server restarts, your SQLite `users.db` and ChromaDB vector store will be wiped. 
-   - *Workaround*: The `main.py` is configured with a `lifespan` event to automatically download and ingest a sample paper (`PMC8043444`) every time the server boots, ensuring you always have data for demonstrations!
+4. **Ephemeral Filesystem Strategy**: 
+   Because cloud platforms like Render operate on ephemeral containers, any local SQLite data (`users.db`) and ChromaDB vector segments will vanish upon instance idling or deployment updates.
+   - *Mitigation*: The application uses a programmatic bootstrap phase during startup. By hooking into the FastAPI `@asynccontextmanager` lifespan, the system automatically triggers a background fetch to the NCBI PMC database for a highly relevant default paper (e.g., `PMC8043444`). This ensures the vector index contains baseline medical embeddings instantly upon booting, removing operational friction for live evaluations.
 
 ### Deploying the Frontend to Vercel
 
