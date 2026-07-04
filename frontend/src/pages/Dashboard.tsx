@@ -12,6 +12,28 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
+  const [loadingPhase, setLoadingPhase] = useState(0);
+
+  // Fake-but-honest progress indicator for Agent workflow
+  useEffect(() => {
+    let timeout1: NodeJS.Timeout;
+    let timeout2: NodeJS.Timeout;
+    if (isLoading) {
+      setLoadingPhase(0); // Researcher
+      timeout1 = setTimeout(() => setLoadingPhase(1), 5000); // Writer
+      timeout2 = setTimeout(() => setLoadingPhase(2), 12000); // Reviewer
+    }
+    return () => {
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+    };
+  }, [isLoading]);
+
+  const loadingMessages = [
+    "Researcher is reading papers...",
+    "Writer is drafting...",
+    "Reviewer is checking..."
+  ];
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -154,8 +176,14 @@ export default function Dashboard() {
                 <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-4 mt-20">
                   <div className="animate-pulse flex flex-col items-center gap-3">
                     <div className="h-12 w-12 rounded-full border-4 border-t-teal-500 border-r-blue-500 border-b-teal-500 border-l-blue-500 animate-spin"></div>
-                    <p className="mt-4 font-medium tracking-widest uppercase text-sm text-gray-500">Agents at work</p>
-                    <p className="text-xs text-gray-400">Retrieving • Writing • Reviewing</p>
+                    <p className="mt-4 font-medium text-lg text-gray-600">
+                      {loadingMessages[loadingPhase]}
+                    </p>
+                    <div className="flex gap-1 mt-2">
+                      <div className={`h-2 w-8 rounded-full ${loadingPhase >= 0 ? 'bg-blue-500' : 'bg-gray-200'}`}></div>
+                      <div className={`h-2 w-8 rounded-full ${loadingPhase >= 1 ? 'bg-blue-500' : 'bg-gray-200'}`}></div>
+                      <div className={`h-2 w-8 rounded-full ${loadingPhase >= 2 ? 'bg-blue-500' : 'bg-gray-200'}`}></div>
+                    </div>
                   </div>
                 </div>
               ) : translation ? (
