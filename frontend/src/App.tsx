@@ -1,4 +1,3 @@
-import React from 'react';
 import MedicalTranslatorApp from './components/MedicalTranslatorApp';
 import './App.css';
 

@@ -34,7 +34,7 @@ export default function MedicalTranslatorApp() {
 
   // Auto-progress tracker when analyzing
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setInterval>;
     if (status === "analyzing") {
       timer = setInterval(() => {
         setProgressIndex(prev => {
