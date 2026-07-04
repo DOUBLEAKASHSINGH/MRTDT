@@ -3,9 +3,9 @@ from crewai import Agent, Task, Crew, Process, LLM
 from app.agents.tools import RetrievalTool
 
 llm = LLM(
-    model="gpt-4o-mini",
+    model="gemini/gemini-1.5-flash",
     temperature=0.2,
-    api_key=os.environ.get("OPENAI_API_KEY", "")
+    api_key=os.environ.get("GEMINI_API_KEY", "")
 )
 
 def create_medical_translation_crew():
