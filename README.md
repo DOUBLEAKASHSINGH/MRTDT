@@ -89,6 +89,22 @@ The FastAPI backend can be easily deployed using Render's Web Services.
 6. **OAuth2 Compliance & Token Lifecycle**:
    To meet security standards, the application decouples standard JSON request payloads from authentication entry points. The `/auth/login` endpoint strictly requires `application/x-www-form-urlencoded` payloads via `OAuth2PasswordRequestForm`. Downstream verification is enforced globally via FastAPI dependency injection, keeping token validation detached from core domain logic.
 
+---
+
+## 🛠️ Troubleshooting Common Issues
+
+### 1. Is the FastAPI Backend Actually Running?
+A "Failed to fetch" error almost always means the server is offline or unreachable.
+
+**The Fix**: Open a separate terminal window, navigate to your backend directory, and ensure your server is actively running.
+
+Usually, this is the command: 
+```bash
+uvicorn app.main:app --reload --port 8001
+```
+
+Look for the line in the terminal that says: `Application startup complete` and note the URL (e.g. `http://127.0.0.1:8001` or `http://0.0.0.0:8001`). Ensure this matches your frontend's `VITE_API_URL`.
+
 ### Deploying the Frontend to Vercel
 
 The React SPA is optimized for Vercel.
