@@ -71,3 +71,10 @@ def download_pmc_pdf(pmc_id: str, output_dir: str = "../data/raw"):
         return pdf_path
     else:
         raise Exception(f"Could not download PDF for {clean_pmc_id}. Status: {response.status_code}")
+
+def fetch_and_ingest(pmc_id: str):
+    from app.ingestion.pdf_parser import chunk_text
+    from app.db.chroma import store_chunks
+    text = fetch_pmc_xml_and_extract_text(pmc_id)
+    chunks = chunk_text(text)
+    store_chunks(pmc_id, chunks)

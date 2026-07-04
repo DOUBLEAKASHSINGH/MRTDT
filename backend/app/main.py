@@ -1,12 +1,20 @@
 from contextlib import asynccontextmanager
 import os
 import uuid
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.ingestion.pdf_parser import process_pdf
 from app.db.chroma import store_chunks
 from app.agents.crew import create_medical_translation_crew
 from app.ingestion.pmc_api import fetch_and_ingest
+
+from app.db.database import engine, Base
+from app.auth.routes import router as auth_router
+from app.auth.dependencies import get_current_user
+from app.db.models import User
+
+# Create database tables
+Base.metadata.create_all(bind=engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,6 +37,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
+
 def upload_task(file_path: str, document_id: str):
     try:
         # Extract and chunk text using PyMuPDF pipeline
@@ -39,13 +49,13 @@ def upload_task(file_path: str, document_id: str):
         print(f"Failed to process upload {document_id}: {e}")
 
 @app.post("/analyze")
-async def analyze(question: str):
+async def analyze(question: str, current_user: User = Depends(get_current_user)):
     crew = create_medical_translation_crew()
     result = crew.kickoff(inputs={"question": question})
     return {"answer": str(result.raw)}
 
 @app.post("/upload")
-async def upload(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+async def upload(background_tasks: BackgroundTasks, file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
     # save temp
     upload_dir = "../data/raw"
     if not os.path.exists(upload_dir):
