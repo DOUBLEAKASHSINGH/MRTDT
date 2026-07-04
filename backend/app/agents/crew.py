@@ -1,6 +1,6 @@
 import os
 from crewai import Agent, Task, Crew, Process, LLM
-from app.agents.tools import RetrievalTool
+from app.agents.tools import LocalChromaQueryTool
 
 llm = LLM(
     model="gemini/gemini-1.5-flash",
@@ -9,7 +9,7 @@ llm = LLM(
 )
 
 def create_medical_translation_crew():
-    retrieval_tool = RetrievalTool()
+    retrieval_tool = LocalChromaQueryTool()
 
     researcher = Agent(
         role="Medical Researcher",
