@@ -17,7 +17,7 @@ class LocalChromaQueryTool(BaseTool):
 
     def _run(self, query: str) -> str:
         from app.db.chroma import search_chunks
-        results = search_chunks(query, n_results=5)
+        results = search_chunks(query, n_results=10)
         if not results:
             return "No relevant context found in local papers."
         return "\n\n".join(results)
