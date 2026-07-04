@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import os
 import uuid
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
@@ -5,8 +6,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.ingestion.pdf_parser import process_pdf
 from app.db.chroma import store_chunks
 from app.agents.crew import create_medical_translation_crew
+from app.ingestion.pmc_api import fetch_and_ingest
 
-app = FastAPI(title="Medical Research Translator API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Auto-index a sample paper on startup (Phase 6 Render workaround)
+    print("Starting auto-ingestion for ephemeral filesystem...")
+    try:
+        fetch_and_ingest("PMC8043444")
+        print("Auto-ingestion complete!")
+    except Exception as e:
+        print(f"Auto-ingestion failed: {e}")
+    yield
+    print("Shutting down...")
+
+app = FastAPI(title="Medical Research Translator API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
