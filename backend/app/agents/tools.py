@@ -127,3 +127,50 @@ class ReportLabPDFGeneratorTool(BaseTool):
             return f"Successfully generated PDF report at {filepath}"
         except Exception as e:
             return f"Error generating PDF: {e}"
+
+
+class PubMedSearchInput(BaseModel):
+    query: str = Field(..., description="The medical keyword or condition to search for guidelines on PubMed.")
+
+class PubMedSearchTool(BaseTool):
+    name: str = "PubMed Guidelines Search"
+    description: str = "Searches the NIH PubMed API for recent medical guidelines related to a query."
+    args_schema: Type[BaseModel] = PubMedSearchInput
+
+    def _run(self, query: str) -> str:
+        # eutils esearch and esummary
+        search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+        summary_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
+        search_params = {
+            "db": "pubmed",
+            "term": f"{query} AND guideline[Title/Abstract]",
+            "retmode": "json",
+            "retmax": 3
+        }
+        try:
+            search_res = requests.get(search_url, params=search_params, timeout=10)
+            search_res.raise_for_status()
+            id_list = search_res.json().get("esearchresult", {}).get("idlist", [])
+            
+            if not id_list:
+                return f"No recent guidelines found for: {query}"
+                
+            summary_params = {
+                "db": "pubmed",
+                "id": ",".join(id_list),
+                "retmode": "json"
+            }
+            summary_res = requests.get(summary_url, params=summary_params, timeout=10)
+            summary_res.raise_for_status()
+            result_data = summary_res.json().get("result", {})
+            
+            output = []
+            for uid in id_list:
+                doc = result_data.get(uid, {})
+                title = doc.get("title", "No Title")
+                pubdate = doc.get("pubdate", "Unknown Date")
+                output.append(f"- Guideline: {title} ({pubdate})")
+                
+            return "\n".join(output)
+        except Exception as e:
+            return f"Error querying PubMed API: {e}"
