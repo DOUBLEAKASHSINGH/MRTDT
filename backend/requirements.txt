@@ -152,7 +152,6 @@ rsa==4.9.1
 safetensors==0.8.0
 scikit-learn==1.9.0
 scipy==1.17.1
-sentence-transformers==5.6.0
 shellingham==1.5.4
 six==1.17.0
 sniffio==1.3.1
@@ -168,9 +167,7 @@ tiktoken==0.13.0
 tokenizers==0.22.2
 tomli==2.0.2
 tomli_w==1.1.0
-torch==2.12.1
 tqdm==4.68.3
-transformers==5.13.0
 typer==0.26.8
 typing-inspection==0.4.2
 typing_extensions==4.16.0

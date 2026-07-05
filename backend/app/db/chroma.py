@@ -4,13 +4,20 @@ import os
 
 DB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "chroma_db")
 
-_sentence_transformer_ef = None
+_gemini_ef = None
 
 def get_embedding_function():
-    global _sentence_transformer_ef
-    if _sentence_transformer_ef is None:
-        _sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
-    return _sentence_transformer_ef
+    global _gemini_ef
+    if _gemini_ef is None:
+        gemini_api_key = os.getenv("GEMINI_API_KEY")
+        if not gemini_api_key:
+            raise ValueError("GEMINI_API_KEY environment variable is not set")
+            
+        _gemini_ef = embedding_functions.GoogleGenerativeAiEmbeddingFunction(
+            api_key=gemini_api_key,
+            task_type="RETRIEVAL_DOCUMENT"
+        )
+    return _gemini_ef
 
 def get_chroma_client():
     if not os.path.exists(DB_DIR):
