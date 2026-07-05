@@ -10,19 +10,7 @@ from app.db.chroma import store_chunks
 from app.agents.crew_setup import create_expanded_medical_crew
 from app.ingestion.pmc_api import fetch_and_ingest
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Auto-index a sample paper on startup (Phase 6 Render workaround)
-    print("Starting auto-ingestion for ephemeral filesystem...")
-    try:
-        fetch_and_ingest("PMC8043444")
-        print("Auto-ingestion complete!")
-    except Exception as e:
-        print(f"Auto-ingestion failed: {e}")
-    yield
-    print("Shutting down...")
-
-app = FastAPI(title="Medical Research Translator API", lifespan=lifespan)
+app = FastAPI(title="Medical Research Translator API")
 
 # 1. Wide-open CORS
 app.add_middleware(
