@@ -4,8 +4,13 @@ import os
 
 DB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "chroma_db")
 
-# Use MiniLM which runs locally
-sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+_sentence_transformer_ef = None
+
+def get_embedding_function():
+    global _sentence_transformer_ef
+    if _sentence_transformer_ef is None:
+        _sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+    return _sentence_transformer_ef
 
 def get_chroma_client():
     if not os.path.exists(DB_DIR):
@@ -15,7 +20,7 @@ def get_chroma_client():
 def get_collection(client, collection_name="medical_papers"):
     return client.get_or_create_collection(
         name=collection_name, 
-        embedding_function=sentence_transformer_ef
+        embedding_function=get_embedding_function()
     )
 
 def store_chunks(paper_id: str, chunks: list[str]):
