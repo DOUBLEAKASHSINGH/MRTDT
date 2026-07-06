@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Upload, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { FileText, Upload, AlertCircle, CheckCircle2, Loader2, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 
@@ -56,10 +56,21 @@ export default function DashboardPage() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFiles(Array.from(e.target.files));
+      const incomingFiles = Array.from(e.target.files);
+      setSelectedFiles(prevFiles => {
+        // Prevent duplicate files with the exact same name and size from cluttering the queue
+        const filtered = incomingFiles.filter(
+          incoming => !prevFiles.some(existing => existing.name === incoming.name && existing.size === incoming.size)
+        );
+        return [...prevFiles, ...filtered];
+      });
       setUploadSuccess(false);
       setErrorMessage('');
     }
+  };
+
+  const handleRemoveFile = (indexToRemove: number) => {
+    setSelectedFiles((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
   const handleUpload = async () => {
@@ -81,6 +92,7 @@ export default function DashboardPage() {
       });
       if (!response.ok) throw new Error('Upload initialization failed.');
       setUploadSuccess(true);
+      setSelectedFiles([]);
     } catch (err) {
       setErrorMessage('Failed to connect to backend server. Make sure your Render instance is fully live and Firebase auth is valid.');
     } finally {
@@ -149,6 +161,14 @@ export default function DashboardPage() {
                   <div key={idx} className="flex items-center space-x-2 text-sm text-gray-700 bg-white border border-gray-200 p-2 rounded-md shadow-sm">
                     <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
                     <span className="truncate flex-grow">{file.name}</span>
+                    <button
+                      onClick={() => handleRemoveFile(idx)}
+                      disabled={isUploading}
+                      className="text-gray-400 hover:text-red-500 transition-colors focus:outline-none disabled:opacity-50"
+                      aria-label="Remove file"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
                   </div>
                 ))}
                 <button
