@@ -1,11 +1,12 @@
 import os
 from crewai import Agent, Task, Crew, Process, LLM
 from app.agents.tools import LocalChromaQueryTool
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-llm = LLM(
-    model="gemini/gemini-pro",
+llm = ChatGoogleGenerativeAI(
+    model="gemini-1.5-flash",
     temperature=0.2,
-    api_key=os.environ.get("GEMINI_API_KEY", "")
+    google_api_key=os.environ.get("GEMINI_API_KEY", "")
 )
 
 def create_medical_translation_crew():

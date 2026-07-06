@@ -8,10 +8,12 @@ from app.agents.tools import (
     ReportLabPDFGeneratorTool
 )
 
-llm = LLM(
-    model="gemini/gemini-pro",
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-1.5-flash",
     temperature=0.2,
-    api_key=os.environ.get("GEMINI_API_KEY", "")
+    google_api_key=os.environ.get("GEMINI_API_KEY", "")
 )
 
 def create_expanded_medical_crew():
