@@ -103,8 +103,8 @@ export default function DashboardPage() {
   const handleAnalyze = async () => {
     if (!query.trim()) return;
     setIsAnalyzing(true);
-    setAnalysisResult('');
     setErrorMessage('');
+    setAnalysisResult('');
 
     try {
       const token = await user.getIdToken();
@@ -116,11 +116,16 @@ export default function DashboardPage() {
         },
         body: JSON.stringify({ question: query }),
       });
-      if (!response.ok) throw new Error('Analysis processing failed.');
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Server encountered an orchestration fault.');
+      }
+
       const data = await response.json();
       setAnalysisResult(data.result || data.summary || data.answer || 'Processing complete.');
-    } catch (err) {
-      setErrorMessage('Failed to fetch translation. The multi-agent pipeline timed out or the server went offline.');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to fetch translation loops.');
     } finally {
       setIsAnalyzing(false);
     }

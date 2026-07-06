@@ -39,9 +39,13 @@ def process_multiple_uploads(file_paths: List[str]):
 # 4. Analyze endpoint accepting JSON body
 @app.post("/analyze")
 async def analyze(request: QueryRequest, user: dict = Depends(get_current_user)):
-    crew = create_expanded_medical_crew()
-    result = crew.kickoff(inputs={"question": request.question})
-    return {"answer": str(result.raw)}
+    try:
+        crew = create_expanded_medical_crew()
+        result = crew.kickoff(inputs={"question": request.question})
+        return {"answer": str(result.raw)}
+    except Exception as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
 
 # 2. Upload endpoint accepting a list of files
 @app.post("/upload")
