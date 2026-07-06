@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -26,7 +26,6 @@ export default function DashboardPage() {
     'Medical Practice Advocacy Specialist is assembling the structural PDF manifest...'
   ];
 
-  // Artificially cycle through agents for the Multi-Agent Latency UI Deception
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (isAnalyzing) {
@@ -36,12 +35,20 @@ export default function DashboardPage() {
           if (prev < agentSteps.length - 1) return prev + 1;
           return prev; 
         });
-      }, 7000); // Shift every 7 seconds during long CrewAI loop
+      }, 7000); 
     } else {
       setActiveAgentIndex(-1);
     }
     return () => clearInterval(interval);
   }, [isAnalyzing]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -64,14 +71,18 @@ export default function DashboardPage() {
     selectedFiles.forEach(file => formData.append('files', file));
 
     try {
+      const token = await user.getIdToken();
       const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData,
       });
       if (!response.ok) throw new Error('Upload initialization failed.');
       setUploadSuccess(true);
     } catch (err) {
-      setErrorMessage('Failed to connect to backend server. Make sure your Render instance is fully live.');
+      setErrorMessage('Failed to connect to backend server. Make sure your Render instance is fully live and Firebase auth is valid.');
     } finally {
       setIsUploading(false);
     }
@@ -84,9 +95,13 @@ export default function DashboardPage() {
     setErrorMessage('');
 
     try {
+      const token = await user.getIdToken();
       const response = await fetch(`${API_URL}/analyze`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ question: query }),
       });
       if (!response.ok) throw new Error('Analysis processing failed.');
@@ -109,9 +124,7 @@ export default function DashboardPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left Side: Document Queueing & Query Inputs */}
         <div className="lg:col-span-2 space-y-6">
-          {/* File Upload card */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <Upload className="mr-2 h-5 w-5 text-blue-600" /> Source Library Upload
@@ -129,7 +142,6 @@ export default function DashboardPage() {
               <p className="text-xs text-gray-400 mt-1">Accepts multiple academic or clinical files simultaneously</p>
             </div>
 
-            {/* Selected File Queue rendering */}
             {selectedFiles.length > 0 && (
               <div className="mt-4 space-y-2">
                 <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Queued Files ({selectedFiles.length})</p>
@@ -161,7 +173,6 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Core Prompt Box */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Clinical Research Inquiry</h2>
             <textarea
@@ -184,7 +195,6 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* Finished Plain-Language Summary Display */}
           {analysisResult && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 prose max-w-none">
               <div className="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
@@ -200,7 +210,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Right Side: Tracking State-Machine Matrix */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-6">Orchestration Tracker</h2>
           <div className="space-y-6">

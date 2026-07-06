@@ -1,21 +1,33 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 import { Stethoscope } from 'lucide-react';
 
 export default function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password && name) {
-      // Mock signup: just log them in
-      login(email);
+    if (!email || !password || !name) return;
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // NOTE: Firebase Auth doesn't natively store 'name' in email/password flow by default
+      // without calling updateProfile(), but the user is created successfully.
       navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create an account.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,6 +46,13 @@ export default function Signup() {
             </Link>
           </p>
         </div>
+
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-200">
+            {error}
+          </div>
+        )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSignup}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
@@ -74,9 +93,10 @@ export default function Signup() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-sm"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-sm disabled:opacity-70"
             >
-              Sign Up
+              {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </div>
         </form>

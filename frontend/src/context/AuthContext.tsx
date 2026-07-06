@@ -1,38 +1,33 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import type { User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 interface AuthContextType {
-  user: string | null;
-  login: (email: string) => void;
-  logout: () => void;
+  user: User | null;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check local storage on mount
-    const savedUser = localStorage.getItem('mock_user');
-    if (savedUser) {
-      setUser(savedUser);
-    }
+    // Listen for Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return unsubscribe;
   }, []);
 
-  const login = (email: string) => {
-    setUser(email);
-    localStorage.setItem('mock_user', email);
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('mock_user');
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, loading }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 }

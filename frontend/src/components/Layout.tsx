@@ -1,12 +1,24 @@
 import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Activity, Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 export default function Layout() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error('Failed to log out', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col font-sans">
@@ -57,10 +69,10 @@ export default function Layout() {
                   <div className="flex items-center gap-4 ml-2 pl-6 border-l border-gray-200">
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <User className="w-4 h-4" />
-                      <span className="truncate max-w-[150px]">{user}</span>
+                      <span className="truncate max-w-[150px]">{user.email}</span>
                     </div>
                     <button 
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
@@ -122,11 +134,11 @@ export default function Layout() {
                   Dashboard
                 </Link>
                 <div className="px-3 py-2 flex items-center gap-2 text-gray-500 text-sm">
-                  <User className="w-4 h-4" /> {user}
+                  <User className="w-4 h-4" /> {user.email}
                 </div>
                 <button
                   onClick={() => {
-                    logout();
+                    handleLogout();
                     setIsOpen(false);
                   }}
                   className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 flex items-center gap-2"
