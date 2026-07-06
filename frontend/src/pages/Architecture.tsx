@@ -30,6 +30,31 @@ export default function ArchitecturePage() {
           </div>
         ))}
       </div>
+
+      {/* New Section: Project Helpfulness & Impact */}
+      <div className="mt-20 bg-gray-50 rounded-2xl p-8 lg:p-12 border border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Project Helpfulness & Impact</h2>
+        <div className="space-y-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-blue-600 mb-2">Curing LLM Hallucinations</h3>
+            <p className="text-gray-600 leading-relaxed text-sm">
+              Standard AI models analyze medical documents in a vacuum, often hallucinating clinical facts when encountering unfamiliar regimens. By establishing strict programmatic API grounding (hitting openFDA for drug warnings and ClinicalTrials.gov for active study parameters), our pipeline is structurally banned from guessing. 
+            </p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-teal-600 mb-2">Saving Doctors Time</h3>
+            <p className="text-gray-600 leading-relaxed text-sm">
+              Medical professionals face severe structural constraints during patient consultations. They lack the time to run extensive background searches across global registries. Our 6-agent sequential orchestration compiles extensive research into a single, standardized manifest in under a minute, doing the heavy lifting automatically.
+            </p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-amber-600 mb-2">Empowering Patients</h3>
+            <p className="text-gray-600 leading-relaxed text-sm">
+              Patients handed dense pathology reports often face immense cognitive friction and panic. The Patient Communication Specialist agent specifically targets this barrier by translating toxic, dense clinical terminology into empathetic, plain-English patient summaries that democratize understanding.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -53,6 +53,22 @@ export default function Layout() {
                 >
                   Architecture
                 </Link>
+                <Link 
+                  to="/about" 
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                    location.pathname === '/about' ? 'border-blue-600 text-gray-950' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  About Us
+                </Link>
+                <Link 
+                  to="/contact" 
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                    location.pathname === '/contact' ? 'border-blue-600 text-gray-950' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Contact
+                </Link>
               </div>
             </div>
             
@@ -67,10 +83,10 @@ export default function Layout() {
                     Launch Dashboard
                   </Link>
                   <div className="flex items-center gap-4 ml-2 pl-6 border-l border-gray-200">
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Link to="/account" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
                       <User className="w-4 h-4" />
-                      <span className="truncate max-w-[150px]">{user.email}</span>
-                    </div>
+                      <span>Account</span>
+                    </Link>
                     <button 
                       onClick={handleLogout}
                       className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
@@ -121,6 +137,20 @@ export default function Layout() {
             >
               Architecture
             </Link>
+            <Link
+              to="/about"
+              onClick={() => setIsOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >
+              About Us
+            </Link>
+            <Link
+              to="/contact"
+              onClick={() => setIsOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Contact
+            </Link>
             
             <div className="border-t border-gray-200 my-2"></div>
             
@@ -133,9 +163,13 @@ export default function Layout() {
                 >
                   Dashboard
                 </Link>
-                <div className="px-3 py-2 flex items-center gap-2 text-gray-500 text-sm">
-                  <User className="w-4 h-4" /> {user.email}
-                </div>
+                <Link
+                  to="/account"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" /> Account
+                </Link>
                 <button
                   onClick={() => {
                     handleLogout();
@@ -179,6 +213,11 @@ export default function Layout() {
           <div className="flex items-center space-x-2">
             <Activity className="h-5 w-5 text-blue-600" />
             <span className="font-semibold text-gray-700">Medical Research Translator AI</span>
+          </div>
+          <div className="flex space-x-6 text-sm text-gray-500 font-medium">
+            <Link to="/about" className="hover:text-blue-600 transition">About Us</Link>
+            <Link to="/contact" className="hover:text-blue-600 transition">Contact</Link>
+            <Link to="/architecture" className="hover:text-blue-600 transition">Architecture</Link>
           </div>
           <p className="text-sm text-gray-500">
             &copy; {new Date().getFullYear()} MRT AI. Built for clinical precision and public transparency.

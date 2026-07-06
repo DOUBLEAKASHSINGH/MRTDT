@@ -5,6 +5,9 @@ import ArchitecturePage from './pages/Architecture';
 import DashboardPage from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import AccountPage from './pages/AccountPage';
 import { AuthProvider } from './context/AuthContext';
 
 export default function App() {
@@ -18,6 +21,9 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/account" element={<AccountPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
