@@ -41,7 +41,7 @@ def process_multiple_uploads(file_paths: List[str]):
 async def analyze(request: QueryRequest, user: dict = Depends(get_current_user)):
     try:
         crew = create_expanded_medical_crew()
-        result = crew.kickoff(inputs={"question": request.question})
+        result = await crew.kickoff_async(inputs={"question": request.question})
         return {"answer": str(result.raw)}
     except Exception as e:
         from fastapi import HTTPException
