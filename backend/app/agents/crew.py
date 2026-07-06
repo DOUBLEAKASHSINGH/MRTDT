@@ -64,7 +64,8 @@ def create_medical_translation_crew():
         agents=[researcher, writer, reviewer],
         tasks=[research_task, writing_task, review_task],
         process=Process.sequential,
-        verbose=True
+        verbose=True,
+        max_rpm=3
     )
 
     return crew

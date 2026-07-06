@@ -145,7 +145,8 @@ def create_expanded_medical_crew():
             pdf_task
         ],
         process=Process.sequential,
-        verbose=True
+        verbose=True,
+        max_rpm=3
     )
 
     return crew
