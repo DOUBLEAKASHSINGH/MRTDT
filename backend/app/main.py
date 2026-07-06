@@ -47,6 +47,18 @@ async def analyze(request: QueryRequest, user: dict = Depends(get_current_user))
         from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=str(e))
 
+import glob
+from fastapi.responses import FileResponse
+
+@app.get("/download-latest-report")
+async def download_latest_report():
+    list_of_files = glob.glob('reports/*.pdf')
+    if not list_of_files:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="No report found")
+    latest_file = max(list_of_files, key=os.path.getctime)
+    return FileResponse(path=latest_file, media_type="application/pdf", filename="Clinical_Report.pdf")
+
 # 2. Upload endpoint accepting a list of files
 @app.post("/upload")
 async def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...), user: dict = Depends(get_current_user)):

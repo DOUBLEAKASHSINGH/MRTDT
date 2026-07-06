@@ -224,7 +224,10 @@ export default function DashboardPage() {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 prose max-w-none">
               <div className="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
                 <h2 className="text-xl font-bold text-gray-900 m-0">Consolidated Clinical Interpretation</h2>
-                <button className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm">
+                <button 
+                  onClick={() => window.open(`${import.meta.env.VITE_API_URL}/download-latest-report`, '_blank')}
+                  className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm"
+                >
                   Download Standardized PDF Report
                 </button>
               </div>
