@@ -1,17 +1,20 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAUqxvu8KHLKZJ_dP4ETRFcv2IGPFwvrnc",
+  authDomain: "mrtdt-751fc.firebaseapp.com",
+  projectId: "mrtdt-751fc",
+  storageBucket: "mrtdt-751fc.firebasestorage.app",
+  messagingSenderId: "3810499399",
+  appId: "1:3810499399:web:a833a928562f2de8c80a62",
+  measurementId: "G-F38Z2N5T2Q"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication and get a reference to the service
+// Export Auth so your Login/Signup components can use it
 export const auth = getAuth(app);
+export const analytics = getAnalytics(app);
