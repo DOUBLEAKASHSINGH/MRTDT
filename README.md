@@ -1,17 +1,44 @@
 # Medical Research Translator (MRT AI)
 
-MRT AI is a full-stack, AI-powered application designed to retrieve, analyze, and synthesize highly technical medical literature into plain-English patient summaries. It uses a robust 6-Agent CrewAI pipeline, backed by ChromaDB vector search and real-time integration with ClinicalTrials.gov and the FDA Open Safety API.
+MRT AI is an enterprise-grade, full-stack, RAG-powered (Retrieval-Augmented Generation) platform engineered to retrieve, analyze, and synthesize highly dense, technical biomedical literature into empathetic, plain-English patient summaries. 
 
-## Architecture 🏗️
-
-- **Frontend**: React (Vite) Single-Page Application (Tailwind CSS, Lucide Icons, React Markdown)
-- **Backend**: FastAPI (Python)
-- **Database**: SQLite (User Auth) + ChromaDB (Vector Search for medical PDFs)
-- **AI Engine**: CrewAI Orchestration powered by `gemini-1.5-flash`
+Backed by a robust **6-Agent CrewAI pipeline**, a specialized vector embedding layer, and real-time medical API grounding integrations, MRT AI bridges the communication gap between clinical discovery and patient comprehension.
 
 ---
 
-## 🚀 Local Development Setup
+## The Problem We Are Solving
+
+1. **The Patient Translation Barrier:** Patients facing complex diagnoses are frequently handed dense, clinical trial literature, pathology reports, or academic journal articles full of impenetrable jargon. This creates immense cognitive friction and post-appointment panic.
+2. **The Hallucination Window of Generic LLMs:** Standard chat interfaces (like ChatGPT or Claude) analyze uploaded documents in a vacuum. When encountering unfamiliar medical anomalies or specific drug regimens, they synthesize "convincing but dangerously hallucinated" clinical facts, missing crucial safety profiles or real-world timelines.
+3. **The "Frozen in Time" Knowledge Gap:** Medical knowledge advances daily. Generic models rely on fixed training cutoff dates, making them completely blind to active clinical trials, newly declared adverse side-effects, or emergent FDA black-box warnings.
+4. **The Doctor Time Constraint:** Modern medical professionals are structurally limited to brief patient consultations. They lack the time to run extensive background searches across disparate global clinical registries to assemble custom plain-language guidebooks for every single patient.
+
+---
+
+## The Moat (Defensible Engineering Advantage)
+
+Unlike typical single-prompt AI wrappers, MRT AI establishes a highly defensible technical moat across three structural design layers:
+
+* **Programmatic Multi-Agent Separation:** By breaking down text synthesis into a sequential pipeline of 6 isolated agents, the application forces rigorous peer-review and data hand-offs. Agents are programmatically banned from guessing; an agent cannot output content unless it is strictly grounded by the previous agent's facts or an external data schema.
+* **Live Global API Grounding Matrix:** The core orchestration layer doesn't rely on pre-trained memory. It actively hits real-world clinical nodes live during execution:
+  * **ClinicalTrials.gov API** to verify ongoing human studies, matching criteria, and recruiting locations.
+  * **openFDA API** to ingest active drug warnings, recall mandates, and adverse event profiles.
+  * **NCBI PubMed API** to reference baseline NIH guideline alignment.
+* **Deterministic Structured Report Synthesis:** Instead of returning free-form markdown that looks like a generic chatbot output, the system outputs a fixed data manifest. This manifest is programmatically compiled into a standardized, production-ready, downloadable PDF using strict corporate styling boundaries.
+
+---
+
+## Architecture
+
+* **Frontend:** React (Vite) multi-page architecture styled with Tailwind CSS, using Lucide Icons for real-time tracking visualization and React Router for view orchestration.
+* **Backend:** FastAPI (Python) high-performance async framework.
+* **Authentication:** Firebase Authentication (Client SDK token generation + Python Admin SDK verification).
+* **Database & Vector Index:** ChromaDB (Vector Search & Document Chunk Embedding) using localized SentenceTransformer weights.
+* **AI Engine:** CrewAI multi-agent state execution powered by `gemini-1.5-flash`.
+
+---
+
+## Local Development Setup
 
 ### 1. Backend (FastAPI + CrewAI)
 
@@ -65,7 +92,7 @@ MRT AI is a full-stack, AI-powered application designed to retrieve, analyze, an
 
 ---
 
-## 🌐 Production Deployment Guide
+## Production Deployment Guide
 
 ### Deploying the Backend to Render
 
@@ -91,7 +118,7 @@ The FastAPI backend can be easily deployed using Render's Web Services.
 
 ---
 
-## 🛠️ Troubleshooting Common Issues
+## Troubleshooting Common Issues
 
 ### 1. Is the FastAPI Backend Actually Running?
 A "Failed to fetch" error almost always means the server is offline or unreachable.
@@ -118,7 +145,7 @@ The React SPA is optimized for Vercel.
 
 ---
 
-## 🔐 Auth Integration Details
+## Auth Integration Details
 The React frontend handles authentication seamlessly:
 - When a user logs in, the FastAPI backend verifies the credentials and returns a securely signed JWT token.
 - The React SPA saves this token to `localStorage`.
