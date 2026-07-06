@@ -1,4 +1,3 @@
-import React from 'react';
 import { Users, Code, Award, Activity } from 'lucide-react';
 
 export default function AboutPage() {
