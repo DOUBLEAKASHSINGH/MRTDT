@@ -29,13 +29,12 @@ export default function DashboardPage() {
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (isAnalyzing) {
-      setActiveAgentIndex(0);
       interval = setInterval(() => {
-        setActiveAgentIndex((prev) => {
-          if (prev < agentSteps.length - 1) return prev + 1;
-          return prev; 
+        setActiveAgentIndex((current) => {
+          if (current < 5) return current + 1; // Increment step by step up to the 6th agent
+          return current;
         });
-      }, 7000); 
+      }, 6000);
     } else {
       setActiveAgentIndex(-1);
     }
@@ -103,6 +102,7 @@ export default function DashboardPage() {
   const handleAnalyze = async () => {
     if (!query.trim()) return;
     setIsAnalyzing(true);
+    setActiveAgentIndex(0); // Instantly light up the first agent (Core Medical Researcher)
     setErrorMessage('');
     setAnalysisResult('');
 
