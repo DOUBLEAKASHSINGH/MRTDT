@@ -1,14 +1,15 @@
 from contextlib import asynccontextmanager
 import os
 import uuid
-from typing import List
+from typing import List, Any
 from pydantic import BaseModel
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.ingestion.pdf_parser import process_pdf
 from app.db.chroma import store_chunks
 from app.agents.crew_setup import create_expanded_medical_crew
 from app.ingestion.pmc_api import fetch_and_ingest
+from app.auth.dependencies import get_current_user
 
 app = FastAPI(title="Medical Research Translator API")
 
@@ -37,14 +38,14 @@ def process_multiple_uploads(file_paths: List[str]):
 
 # 4. Analyze endpoint accepting JSON body
 @app.post("/analyze")
-async def analyze(request: QueryRequest):
+async def analyze(request: QueryRequest, user: dict = Depends(get_current_user)):
     crew = create_expanded_medical_crew()
     result = crew.kickoff(inputs={"question": request.question})
     return {"answer": str(result.raw)}
 
 # 2. Upload endpoint accepting a list of files
 @app.post("/upload")
-async def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):
+async def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...), user: dict = Depends(get_current_user)):
     upload_dir = "../data/raw"
     if not os.path.exists(upload_dir):
         os.makedirs(upload_dir)
@@ -61,6 +62,7 @@ async def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = Fi
         
     # Trigger background ingestion
     background_tasks.add_task(process_multiple_uploads, saved_file_paths)
+
     
     return {
         "status": "indexing", 
