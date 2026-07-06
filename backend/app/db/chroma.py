@@ -15,7 +15,8 @@ def get_embedding_function():
             
         _gemini_ef = embedding_functions.GoogleGenerativeAiEmbeddingFunction(
             api_key=gemini_api_key,
-            task_type="RETRIEVAL_DOCUMENT"
+            task_type="RETRIEVAL_DOCUMENT",
+            model_name="models/text-embedding-004"
         )
     return _gemini_ef
 
