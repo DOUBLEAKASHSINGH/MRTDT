@@ -9,7 +9,7 @@ from app.agents.tools import (
 )
 
 llm = LLM(
-    model="gemini/gemini-1.5-pro",
+    model="gemini/gemini-pro",
     temperature=0.2,
     api_key=os.environ.get("GEMINI_API_KEY", "")
 )
