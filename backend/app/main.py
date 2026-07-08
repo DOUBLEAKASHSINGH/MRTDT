@@ -62,7 +62,10 @@ async def download_latest_report():
 # 2. Upload endpoint accepting a list of files
 @app.post("/upload")
 async def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...), user: dict = Depends(get_current_user)):
-    upload_dir = "../data/raw"
+    # Safely construct the upload directory relative to this file
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    upload_dir = os.path.join(BASE_DIR, "data", "raw")
+    
     if not os.path.exists(upload_dir):
         os.makedirs(upload_dir)
         

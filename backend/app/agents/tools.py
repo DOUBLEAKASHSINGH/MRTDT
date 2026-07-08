@@ -16,11 +16,14 @@ class LocalChromaQueryTool(BaseTool):
     args_schema: Type[BaseModel] = LocalChromaQueryToolInput
 
     def _run(self, query: str) -> str:
-        from app.db.chroma import search_chunks
-        results = search_chunks(query, n_results=10)
-        if not results:
-            return "No relevant context found in local papers."
-        return "\n\n".join(results)
+        try:
+            from app.db.chroma import search_chunks
+            results = search_chunks(query, n_results=10)
+            if not results:
+                return "No relevant context found in local papers. Please inform the user that their uploaded document might not contain the answer, or they need to upload it first."
+            return "\n\n".join(results)
+        except Exception as e:
+            return f"SYSTEM ERROR: Failed to access the local medical database. Reason: {str(e)}. You must inform the user about this exact error."
 
 
 class ClinicalTrialsLookupInput(BaseModel):
